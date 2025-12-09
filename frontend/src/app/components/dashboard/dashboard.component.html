@@ -1,0 +1,126 @@
+<div class="dashboard-container" *ngIf="!loading && dashboardData">
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+        <div class="welcome-content">
+            <h1 class="welcome-title">¡Bienvenido a tu Dashboard Financiero! 💰</h1>
+            <p class="welcome-subtitle">Gestiona tus finanzas con la regla 50/30/20</p>
+        </div>
+        <div class="welcome-illustration">
+            <div class="floating-icon">📊</div>
+            <div class="floating-icon delay-1">💳</div>
+            <div class="floating-icon delay-2">💵</div>
+        </div>
+    </div>
+
+    <!-- Salary Card - Prominent -->
+    <div class="salary-section">
+        <div class="salary-card-large">
+            <div class="salary-header">
+                <div class="salary-icon">💰</div>
+                <div class="salary-info">
+                    <span class="salary-label">Tu Sueldo Mensual</span>
+                    <div class="salary-amount" *ngIf="!editingSalary">
+                        {{ formatCurrency(dashboardData.salary.amount) }}
+                    </div>
+                    <div class="salary-edit-container" *ngIf="editingSalary">
+                        <input type="number" [(ngModel)]="newSalary" class="salary-input-large"
+                            placeholder="Ingrese su sueldo" autofocus />
+                    </div>
+                    <div class="salary-date">
+                        <span class="date-icon">🕐</span>
+                        {{ formatDate(dashboardData.salary.lastUpdated) }}
+                    </div>
+                </div>
+            </div>
+            <div class="salary-actions">
+                <button *ngIf="!editingSalary" (click)="startEditSalary()" class="btn btn-primary btn-lg">
+                    <span>✏️</span> Actualizar Sueldo
+                </button>
+                <div *ngIf="editingSalary" class="edit-buttons">
+                    <button (click)="saveSalary()" class="btn btn-success btn-lg">
+                        <span>✓</span> Guardar
+                    </button>
+                    <button (click)="cancelEditSalary()" class="btn btn-outline btn-lg">
+                        <span>✕</span> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards Grid -->
+    <div class="summary-section">
+        <h2 class="section-title">Resumen Financiero</h2>
+        <div class="summary-grid-enhanced">
+            <div class="summary-card-enhanced income-gradient">
+                <div class="card-icon-large">💵</div>
+                <div class="card-content">
+                    <div class="card-label">Ingresos Totales</div>
+                    <div class="card-value">{{ formatCurrency(dashboardData.monthlyIncome) }}</div>
+                    <div class="card-detail">
+                        <span class="detail-badge">{{ dashboardData.counts.incomes }} fuentes</span>
+                    </div>
+                </div>
+                <div class="card-decoration"></div>
+            </div>
+
+            <div class="summary-card-enhanced expense-gradient">
+                <div class="card-icon-large">🏠</div>
+                <div class="card-content">
+                    <div class="card-label">Necesidades (50%)</div>
+                    <div class="card-value">{{ formatCurrency(dashboardData.totals.expenses) }}</div>
+                    <div class="card-detail">
+                        <div class="progress-bar">
+                            <div class="progress-fill"
+                                [style.width.%]="dashboardData.distribution.necesidades.percentage"></div>
+                        </div>
+                        <span class="percentage-text">{{ dashboardData.distribution.necesidades.percentage }}%</span>
+                    </div>
+                </div>
+                <div class="card-decoration"></div>
+            </div>
+
+            <div class="summary-card-enhanced extra-gradient">
+                <div class="card-icon-large">🎮</div>
+                <div class="card-content">
+                    <div class="card-label">Deseos (30%)</div>
+                    <div class="card-value">{{ formatCurrency(dashboardData.totals.extraExpenses +
+                        dashboardData.totals.streaming) }}</div>
+                    <div class="card-detail">
+                        <div class="progress-bar">
+                            <div class="progress-fill" [style.width.%]="dashboardData.distribution.deseos.percentage">
+                            </div>
+                        </div>
+                        <span class="percentage-text">{{ dashboardData.distribution.deseos.percentage }}%</span>
+                    </div>
+                </div>
+                <div class="card-decoration"></div>
+            </div>
+
+            <div class="summary-card-enhanced savings-gradient">
+                <div class="card-icon-large">💎</div>
+                <div class="card-content">
+                    <div class="card-label">Ahorro (20%)</div>
+                    <div class="card-value">{{ formatCurrency(dashboardData.distribution.ahorro.amount) }}</div>
+                    <div class="card-detail">
+                        <div class="progress-bar">
+                            <div class="progress-fill" [style.width.%]="dashboardData.distribution.ahorro.percentage">
+                            </div>
+                        </div>
+                        <span class="percentage-text">{{ dashboardData.distribution.ahorro.percentage }}%</span>
+                    </div>
+                </div>
+                <div class="card-decoration"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart and Stats Section -->
+    <div class="chart-stats-section">
+        <!-- Chart Card -->
+        <div class="chart-card-enhanced">
+            <div class="card-header-enhanced">
+                <h3 class="card-title-enhanced">Regla 50/30/20</h3>
+                <p class="card-subtitle">Distribución ideal de tus ingresos</p>
+            </div>
+            <div class="chart-container-e

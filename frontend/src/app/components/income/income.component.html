@@ -1,0 +1,117 @@
+<div class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">💵 Ingresos</h1>
+            <p class="page-subtitle">Gestiona tus fuentes de ingreso adicionales</p>
+        </div>
+        <button (click)="openForm()" class="btn btn-primary">
+            ➕ Nuevo Ingreso
+        </button>
+    </div>
+
+    <!-- Summary Card -->
+    <div class="summary-banner">
+        <div class="summary-item">
+            <span class="summary-label">Total Ingresos</span>
+            <span class="summary-value">{{ formatCurrency(getTotalIncome()) }}</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Registros</span>
+            <span class="summary-value">{{ incomes.length }}</span>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card" *ngIf="!loading && incomes.length > 0">
+        <table>
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let income of incomes">
+                    <td>{{ income.description }}</td>
+                    <td><span class="badge badge-info">{{ income.category }}</span></td>
+                    <td class="font-bold text-success">{{ formatCurrency(income.amount) }}</td>
+                    <td>{{ formatDate(income.date) }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button (click)="editIncome(income)" class="btn btn-sm btn-outline">
+                                ✏️ Editar
+                            </button>
+                            <button (click)="deleteIncome(income._id!)" class="btn btn-sm btn-danger">
+                                🗑️ Eliminar
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!loading && incomes.length === 0">
+        <div class="empty-icon">📊</div>
+        <h3>No hay ingresos registrados</h3>
+        <p>Comienza agregando tu primer ingreso adicional</p>
+        <button (click)="openForm()" class="btn btn-primary">
+            ➕ Agregar Ingreso
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="loading">
+        <div class="loading-spinner"></div>
+        <p>Cargando ingresos...</p>
+    </div>
+</div>
+
+<!-- Modal Form -->
+<div class="modal-overlay" *ngIf="showForm" (click)="closeForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>{{ editingId ? 'Editar Ingreso' : 'Nuevo Ingreso' }}</h2>
+            <button (click)="closeForm()" class="close-button">✕</button>
+        </div>
+
+        <form (ngSubmit)="saveIncome()" class="modal-body">
+            <div class="form-group">
+                <label>Descripción</label>
+                <input type="text" [(ngModel)]="formData.description" name="description"
+                    placeholder="Ej: Freelance, Bono, etc." required />
+            </div>
+
+            <div class="form-group">
+                <label>Categoría</label>
+                <input type="text" [(ngModel)]="formData.category" name="category"
+                    placeholder="Ej: Freelance, Inversiones, etc." />
+            </div>
+
+            <div class="form-group">
+                <label>Monto (S/)</label>
+                <input type="number" [(ngModel)]="formData.amount" name="amount" step="0.01" min="0" placeholder="0.00"
+                    required />
+            </div>
+
+            <div class="form-group">
+                <label>Fecha</label>
+                <input type="date" [ngModel]="formData.date | date:'yyyy-MM-dd'"
+                    (ngModelChange)="formData.date = $event" name="date" required />
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" (click)="closeForm()" class="btn btn-outline">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-success">
+                    {{ editingId ? 'Actualizar' : 'Guardar' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
